@@ -1,0 +1,2 @@
+# myazurevm
+azure vm
