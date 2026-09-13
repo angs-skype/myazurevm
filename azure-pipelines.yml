@@ -1,0 +1,45 @@
+trigger:
+- main
+
+stages:
+- stage: Deploy
+  displayName: Deploy Custom Web Server
+  jobs:
+  - deployment: DeployWeb
+    displayName: Deploy to Linux VM
+    pool:
+      vmImage: 'ubuntu-latest'
+    environment:
+      name: 'Production-VM'
+      resourceType: VirtualMachine
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - bash: |
+              echo "=== Installing Nginx Web Server ==="
+              sudo apt-get update
+              sudo apt-get install -y nginx
+
+              echo "=== Setting Up Custom Web Content ==="
+              sudo bash -c 'cat <<EOF > /var/www/html/index.html
+              <!DOCTYPE html>
+              <html>
+              <head>
+                  <title>Azure DevOps Web Server</title>
+                  <style>
+                      body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f9; }
+                      h1 { color: #0078D4; }
+                  </style>
+              </head>
+              <body>
+                  <h1>Hello from Azure DevOps Pipeline!</h1>
+                  <p>Custom Web Server deployed successfully on Linux VM.</p>
+              </body>
+              </html>
+              EOF'
+
+              echo "=== Restarting Nginx Service ==="
+              sudo systemctl restart nginx
+              sudo systemctl enable nginx
+            displayName: 'Configure & Start Web Server'
