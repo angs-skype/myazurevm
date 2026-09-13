@@ -10,7 +10,7 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     environment:
-      name: 'Production-VM'
+      name: 'myvm'
       resourceType: VirtualMachine
     strategy:
       runOnce:
